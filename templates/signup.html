@@ -1,47 +1,58 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Sign Up</title>
-</head>
-<body>
-    <h1>Sign Up!!!</h1>
-    <form method="post">
-        {% if userExists%}
-            <h4 style="color: red">User with username already exists</h4>
-        {% endif %}
-        <table>
-            <tr>
-                <td>Username:</td>
-                <td><input type="text" name="username" value="{{ usrname }}"></td>
-                {% if not validUsr %}
-                    <td style="color: red"><sup>*Invalid Username</sup></td>
+{% extends "index.html" %}
+{% block content %}
+    <div class="row">
+        <div class="col-lg-6 col-md-offset-3 content box-shadow ">
+            <h2 class="individual-title">Sign Up!!!</h2>
+            <form method="post">
+                {% if userExists%}
+                    <h4 style="error">User with username already exists</h4>
                 {% endif %}
-            </tr>
-            <tr>
-                <td>Password:</td>
-                <td><input type="password" name="password"></td>
-                {% if not validPsw %}
-                    <td style="color: red"><sup>*Invalid Password</sup></td>
-                {% endif %}
-            </tr>
-            <tr>
-                <td>Verify:</td>
-                <td><input type="password" name="verify"></td>
-                {% if not pswMatch %}
-                    <td style="color: red"><sup>*Passwords did not match</sup></td>
-                {% endif %}
-            </tr>
-            <tr>
-                <td>Email<sup>(optional)</sup>:</td>
-                <td><input type="text" name="email" value="{{ mail }}"></td>
-                {% if not validEmail %}
-                    <td style="color: red"><sup>*Invalid Email</sup></td>
-                {% endif %}
-            </tr>
-        </table>
-        <br>
-        <br>
-        <input type="submit" name="submit">
-    </form>
-</body>
-</html>
+                <table>
+                    <tr class="row">
+                        <td class="col-md-6 table-text">Username:</td>
+                        <td class="col-md-6"><input type="text" name="username" value="{{ usrname }}"></td>
+                    </tr>
+                    {% if not validUsr %}
+                        <tr class="row">
+                            <td class="col-md-6"> </td>
+                            <td class="col-md-6 error"><sup>*Invalid Username</sup></td>
+                        </tr>
+                    {% endif %}
+                    <tr class="row">
+                        <td class="col-md-6 table-text">Password:</td>
+                        <td class="col-md-6"><input type="password" name="password"></td>
+                    </tr>
+                    {% if not validPsw %}
+                        <tr class="row">
+                            <td class="col-md-6"> </td>
+                            <td class="col-md-6 error"><sup>*Invalid Password</sup></td>
+                        </tr>
+                    {% endif %}
+                    <tr class="row">
+                        <td class="col-md-6 table-text">Verify:</td>
+                        <td class="col-md-6"><input type="password" name="verify"></td>
+                    </tr>
+                    {% if not pswMatch %}
+                        <tr class="row">
+                            <td class="col-md-6"> </td>
+                            <td class="col-md-6 error"><sup>*Passwords did not match</sup></td>
+                        </tr>
+                    {% endif %}
+                    <tr class="row">
+                        <td class="col-md-6 table-text">Email<sup>(optional)</sup>:</td>
+                        <td class="col-md-6"><input type="text" name="email" value="{{ mail }}"></td>
+                    </tr>
+                    {% if not validEmail %}
+                        <tr class="row">
+                            <td class="col-md-6"> </td>
+                            <td class="col-md-6 error"><sup>*Invalid Email</sup></td>
+                        </tr>
+                    {% endif %}
+                </table>
+                <input type="submit" name="submit">
+            </form>
+            <br />
+            <p>Already have an account? <a href="/login">Click Here</a></p>
+        </div>
+    </div>
+{% endblock %}

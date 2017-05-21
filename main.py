@@ -99,7 +99,8 @@ class SignupPage(Handler):
         self.render("signup.html", validUsr=True,
                                    validEmail=True,
                                    validPsw=True,
-                                   pswMatch=True)
+                                   pswMatch=True,
+                                   validUser=False)
 
     def post(self):
         usrname = self.request.get("username")
@@ -126,13 +127,15 @@ class SignupPage(Handler):
                 validEmail=validEmail,
                 validPsw=validPsw,
                 pswMatch=pswMatch,
-                userExists=True)
+                userExists=True,
+                validUser=False)
         else:
             self.render("signup.html", usrname=usrname, mail=mail,
             validUsr=validUsr,
             validEmail=validEmail,
             validPsw=validPsw,
-            pswMatch=pswMatch)
+            pswMatch=pswMatch,
+            validUser=False)
 
 class WelcomePage(Handler):
     def get(self):
@@ -141,7 +144,7 @@ class WelcomePage(Handler):
         if id:
             user = Users.get_by_id(long(id))
             if user:
-                self.render("welcome.html", username=user.username)
+                self.render("welcome.html", username=user.username, validUser=True)
             else:
                 self.redirect('/signup')
         else:
@@ -149,7 +152,7 @@ class WelcomePage(Handler):
 
 class LoginPage(Handler):
     def get(self):
-        self.render("login.html", validData=True)
+        self.render("login.html", validData=True, validUser=False)
 
     def post(self):
         usrname = self.request.get("username")
@@ -173,12 +176,12 @@ class LoginPage(Handler):
             error = True
 
         if error:
-            self.render("login.html", validData=False)
+            self.render("login.html", validData=False, validUser=False)
 
 class LogoutPage(Handler):
     def get(self):
         self.response.headers.add_header('Set-Cookie', 'user_id=%s; Path=/' % '')
-        self.redirect("/signup")
+        self.redirect("/login")
 
 app = webapp2.WSGIApplication([
     ('/logout', LogoutPage),
