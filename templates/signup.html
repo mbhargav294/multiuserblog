@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sign Up</title>
+</head>
+<body>
+    <h1>Sign Up!!!</h1>
+    <form method="post">
+        {% if userExists%}
+            <h4 style="color: red">User with username already exists</h4>
+        {% endif %}
+        <table>
+            <tr>
+                <td>Username:</td>
+                <td><input type="text" name="username" value="{{ usrname }}"></td>
+                {% if not validUsr %}
+                    <td style="color: red"><sup>*Invalid Username</sup></td>
+                {% endif %}
+            </tr>
+            <tr>
+                <td>Password:</td>
+                <td><input type="password" name="password"></td>
+                {% if not validPsw %}
+                    <td style="color: red"><sup>*Invalid Password</sup></td>
+                {% endif %}
+            </tr>
+            <tr>
+                <td>Verify:</td>
+                <td><input type="password" name="verify"></td>
+                {% if not pswMatch %}
+                    <td style="color: red"><sup>*Passwords did not match</sup></td>
+                {% endif %}
+            </tr>
+            <tr>
+                <td>Email<sup>(optional)</sup>:</td>
+                <td><input type="text" name="email" value="{{ mail }}"></td>
+                {% if not validEmail %}
+                    <td style="color: red"><sup>*Invalid Email</sup></td>
+                {% endif %}
+            </tr>
+        </table>
+        <br>
+        <br>
+        <input type="submit" name="submit">
+    </form>
+</body>
+</html>
