@@ -1,51 +1,52 @@
 {% extends "index.html" %}
+{% block title %} Sign up!!! {% endblock %}
 {% block content %}
     <div class="row">
         <div class="col-lg-6 col-md-offset-3 content box-shadow ">
             <h2 class="individual-title">Sign Up!!!</h2>
-            <form method="post">
+            <form method="post" autocomplete="off">
                 {% if userExists%}
                     <h4 style="error">User with username already exists</h4>
                 {% endif %}
                 <table>
                     <tr class="row">
-                        <td class="col-md-6 table-text">Username:</td>
-                        <td class="col-md-6"><input type="text" name="username" value="{{ usrname }}"></td>
+                        <td class="col-md-3 table-text">Username:</td>
+                        <td class="col-md-9"><input type="text" name="username" value="{{ usrname }}"></td>
                     </tr>
                     {% if not validUsr %}
                         <tr class="row">
-                            <td class="col-md-6"> </td>
-                            <td class="col-md-6 error"><sup>*Invalid Username</sup></td>
+                            <td class="col-md-3"> </td>
+                            <td class="col-md-9 error"><sup>*Invalid Username</sup></td>
                         </tr>
                     {% endif %}
                     <tr class="row">
-                        <td class="col-md-6 table-text">Password:</td>
-                        <td class="col-md-6"><input type="password" name="password"></td>
+                        <td class="col-md-3 table-text">Password:</td>
+                        <td class="col-md-9"><input type="password" name="password"></td>
                     </tr>
                     {% if not validPsw %}
                         <tr class="row">
-                            <td class="col-md-6"> </td>
-                            <td class="col-md-6 error"><sup>*Invalid Password</sup></td>
+                            <td class="col-md-3"> </td>
+                            <td class="col-md-9 error"><sup>*Invalid Password</sup></td>
                         </tr>
                     {% endif %}
                     <tr class="row">
-                        <td class="col-md-6 table-text">Verify:</td>
-                        <td class="col-md-6"><input type="password" name="verify"></td>
+                        <td class="col-md-3 table-text">Verify:</td>
+                        <td class="col-md-9"><input type="password" name="verify"></td>
                     </tr>
                     {% if not pswMatch %}
                         <tr class="row">
-                            <td class="col-md-6"> </td>
-                            <td class="col-md-6 error"><sup>*Passwords did not match</sup></td>
+                            <td class="col-md-3"> </td>
+                            <td class="col-md-9 error"><sup>*Passwords did not match</sup></td>
                         </tr>
                     {% endif %}
                     <tr class="row">
-                        <td class="col-md-6 table-text">Email<sup>(optional)</sup>:</td>
-                        <td class="col-md-6"><input type="text" name="email" value="{{ mail }}"></td>
+                        <td class="col-md-3 table-text">Email<sup>(optional)</sup>:</td>
+                        <td class="col-md-9"><input type="text" name="email" value="{{ mail }}"></td>
                     </tr>
                     {% if not validEmail %}
                         <tr class="row">
-                            <td class="col-md-6"> </td>
-                            <td class="col-md-6 error"><sup>*Invalid Email</sup></td>
+                            <td class="col-md-3"> </td>
+                            <td class="col-md-9 error"><sup>*Invalid Email</sup></td>
                         </tr>
                     {% endif %}
                 </table>

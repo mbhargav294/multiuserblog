@@ -75,6 +75,17 @@ class Users(db.Model):
     email = db.StringProperty()
     created = db.DateTimeProperty(auto_now_add = True)
 
+class Content(db.Model):
+    subject = db.StringProperty(required = True)
+    content = db.TextProperty(required = True)
+    userid = db.StringProperty(required = True)
+    username = db.StringProperty(required = True)
+    likes = db.IntegerProperty(required = True)
+    comments = db.IntegerProperty(required = True)
+    commentlist = db.StringListProperty(required = True)
+    commentuser = db.StringListProperty(required = True)
+    created = db.DateTimeProperty(auto_now_add = True)
+
 class SignupPage(Handler):
 
     USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
@@ -96,6 +107,13 @@ class SignupPage(Handler):
         return password == verify
 
     def get(self):
+        userid = self.request.cookies.get('user_id', '')
+        id = check_secure_val(userid)
+        if id:
+            user = Users.get_by_id(long(id))
+            if user:
+                self.redirect("/")
+
         self.render("signup.html", validUsr=True,
                                    validEmail=True,
                                    validPsw=True,
@@ -137,21 +155,14 @@ class SignupPage(Handler):
             pswMatch=pswMatch,
             validUser=False)
 
-class WelcomePage(Handler):
+class LoginPage(Handler):
     def get(self):
         userid = self.request.cookies.get('user_id', '')
         id = check_secure_val(userid)
         if id:
             user = Users.get_by_id(long(id))
             if user:
-                self.render("welcome.html", username=user.username, validUser=True)
-            else:
-                self.redirect('/signup')
-        else:
-            self.redirect('/signup')
-
-class LoginPage(Handler):
-    def get(self):
+                self.redirect("/")
         self.render("login.html", validData=True, validUser=False)
 
     def post(self):
@@ -176,16 +187,106 @@ class LoginPage(Handler):
             error = True
 
         if error:
-            self.render("login.html", validData=False, validUser=False)
+            self.render("login.html", validData=False,
+                                    validUser=False)
+
+class WelcomePage(Handler):
+    def get(self):
+        userid = self.request.cookies.get('user_id', '')
+        id = check_secure_val(userid)
+        if id:
+            user = Users.get_by_id(long(id))
+            if user:
+                contents = Content.all()
+                self.render("welcome.html", username=user.username,
+                                            validUser=True,
+                                            contents=contents)
+            else:
+                self.redirect('/login')
+        else:
+            self.redirect('/login')
+
 
 class LogoutPage(Handler):
     def get(self):
-        self.response.headers.add_header('Set-Cookie', 'user_id=%s; Path=/' % '')
+        self.response.headers.add_header('Set-Cookie',
+                                        'user_id=%s; Path=/' % '')
         self.redirect("/login")
+
+class NewPost(Handler):
+    def render_front(self, subject="", content="", error=""):
+        userid = self.request.cookies.get('user_id', '')
+        id = check_secure_val(userid)
+        if id:
+            user = Users.get_by_id(long(id))
+            if user:
+                contents = Content.all()
+                self.render("newpost.html", subject=subject,
+                                            content=content,
+                                            error=error,
+                                            username=user.username,
+                                            validUser=True)
+            else:
+                self.redirect('/login')
+        else:
+            self.redirect('/login')
+
+    def get(self):
+        self.render_front()
+
+    def post(self):
+        subject = self.request.get("subject")
+        content = self.request.get("content")
+
+        if subject and content:
+            userid = self.request.cookies.get('user_id', '')
+            id=check_secure_val(userid)
+            user=Users.get_by_id(long(id))
+            a = Content(subject=subject,
+                        content=content,
+                        userid=id,
+                        username=user.username,
+                        likes=0,
+                        comments=0,
+                        commentlist=[],
+                        commentuser=[])
+            a.put()
+            self.redirect("/" + str(a.key().id()))
+        else:
+            error="All fields are required"
+            self.render_front(subject, content, error)
+
+class SinglePost(Handler):
+    def render_front(self, artId=""):
+        userid = self.request.cookies.get('user_id', '')
+        id=check_secure_val(userid)
+        user=Users.get_by_id(long(id))
+        content = Content.get_by_id(long(artId))
+        self.render("article.html", content=content,
+                                    username=user.username,
+                                    validUser=True)
+
+    def get(self, product_id):
+        self.render_front(artId=product_id)
+
+    def post(self, product_id):
+        userid = self.request.cookies.get('user_id', '')
+        id=check_secure_val(userid)
+        user=Users.get_by_id(long(id))
+        comment = self.request.get("comment")
+        content = Content.get_by_id(long(product_id))
+        if content and comment and len(comment) >= 0:
+            content.commentlist = [comment] + content.commentlist
+            content.commentuser = [user.username] + content.commentuser
+            content.comments = len(content.commentlist)
+            content.put()
+            self.redirect("/"+product_id)
 
 app = webapp2.WSGIApplication([
     ('/logout', LogoutPage),
     ('/login', LoginPage),
     ('/signup', SignupPage),
-    ('/', WelcomePage)
+    ('/', WelcomePage),
+    ('/newpost', NewPost),
+    (r'/(\d+)', SinglePost)
 ], debug=True)

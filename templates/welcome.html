@@ -1,4 +1,39 @@
 {% extends "index.html" %}
+{% block title %} {{username}} - MUB {% endblock %}
 {% block content %}
-        <h1>Welcome, {{ username }}</h1>
+        <div class="row">
+            <a class="col-lg-12 new-post card-small" href="/newpost">+ Add new post</a>
+        </div>
+
+        {% if contents.length == 0%}
+            <div class="row">
+                <p>There are no articles present in this blog</p>
+            </div>
+        {% else %}
+            {% for content in contents%}
+                <div class="row">
+                    <div class="card-small">
+                        <a href="/{{content.key().id()}}" id="{{content.key().id()}}" class="open-post">
+                            <div class="individual-title">
+                                <div class="art-subject col-lg-9">🔗 {{content.subject}}</div>
+                                <div class="art-date col-lg-3">
+                                    {{content.username}}
+                                    <br />
+                                    {{content.created}}
+                                </div>
+                            </div>
+                        </a>
+                        <p class="big-art-content">
+                            {% for line in content.content.splitlines()%}
+                                {{line}}<br />
+                            {% endfor %}
+                        </p>
+                        <div class="actions">
+                            <h1 id="like"/> 💖 {{content.likes}} </h1>
+                            <h1 id="like"/>💬 {{content.comments}}</h1>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
 {% endblock %}

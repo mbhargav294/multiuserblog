@@ -1,8 +1,7 @@
-/** {
-    border-width: 1px;
-    border-style: solid;
-    border-color: red;
-}*/
+* {
+    //border: 1px solid red;
+    transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+}
 
 body {
     margin: 0;
@@ -16,8 +15,285 @@ header {
     background-color: #00796B;
 }
 
+table {
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+table * {
+    text-align: right;
+}
+
+input[type=text], input[type=password], select {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 4px solid #80CBC4;
+    border-radius: 8px;
+    box-sizing: border-box;
+    color: #00796B;
+    outline: none;
+    text-align: left;
+}
+
+input[type=submit]{
+    width: 70%;
+    background-color: #00796B;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    outline: none;
+}
+
+input[type=submit]:hover, input[type=submit]:focus {
+    background-color: #00BFA5;
+    box-shadow: 0 10px 10px rgba(0,0,0,0.30), 0 10px 10px rgba(0,0,0,0.22);
+    color: #000000;
+}
+
+input[type=text]:focus, input[type=password]:focus {
+    background-color: #80CBC4;
+    border: 4px solid #00796B;
+    color: #000000;
+}
+
+textarea {
+    width: 100%;
+    font-size: 17px;
+    font-family: Thoma;
+    padding: 8px 8px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 4px solid #80CBC4;
+    border-radius: 8px;
+    box-sizing: border-box;
+    color: #00796B;
+    outline: none;
+    text-align: left;
+}
+
+textarea:focus {
+    background-color: #80CBC4;
+    border: 4px solid #00796B;
+    color: #000000;
+}
+
+main {
+    margin-bottom: 70px;
+}
+
+footer {
+    background-color: #00796B;
+    color: #FFFFFF;
+    position: fixed;
+    text-align: center;
+    bottom: 0;
+    font-size: 14pt;
+    padding: 10px;
+    border-radius: 8px 8px 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    margin-top: 10px;
+    box-shadow: 0px -10px 10px rgba(0, 0, 0, 0.30);
+}
+
+#like {
+    height: 48px;
+    width: 50%;
+}
+
+.name {
+    font-size: 8pt;
+}
+
+hr{
+    display: block;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    margin-left: auto;
+    margin-right: auto;
+    border-style: inset;
+    border-width: 1px;
+}
+
+.comment {
+    padding: 20px;
+    margin: 3px;
+    box-shadow:         inset 0 0 4px #000000;
+    border-radius: 8px;
+    background-color: #FFFFFF;
+}
+
+.likes {
+    width: auto;
+    font-size: 24pt;
+    text-align: right;
+}
+
+.likes:hover {
+    text-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+}
+
+a {
+    text-decoration: none !important;
+}
+
+a:hover {
+    text-decoration: none !important;
+}
+
+.actions {
+    position: absolute;
+    width: 20%;
+    display: flex;
+    flex-wrap: wrap;
+    background-color: #80CBC4;
+    bottom: 30px;
+    right: 20px;
+    padding: 10px;
+    border-radius: 8px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -moz-box-shadow:    inset 0 0 10px #00796B;
+    -webkit-box-shadow: inset 0 0 10px #00796B;
+    box-shadow:         inset 0 0 10px #00796B;
+}
+
+.new-post-title {
+    width: 100%;
+    font-size: 20px;
+    padding: 2px;
+}
+
+.new-post-text {
+    width: 100%;
+    height: 200px;
+    font-size: 17px;
+    font-family: Thoma;
+}
+
+.submit-post {
+    margin-left: 20px !important;
+    width: 30% !important;
+}
+
+.main-title {
+    text-decoration: none;
+    color: #0C0000;
+    font-size: 32pt;
+}
+
+.art-date {
+    font-size: 9pt;
+    text-align: right;
+    font-weight: 300;
+}
+
+.art-subject {
+    font-weight: bold;
+    font-size: 24pt;
+}
+
+.art-content {
+    font-size: 11pt;
+    text-align: justify;
+
+    display: block;
+    display: -webkit-box;
+    max-width: 90%;
+    height: 90%;
+    margin: 0 auto;
+    line-height: 1.4;
+    -webkit-line-clamp: 15;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.big-art-content {
+    font-size: 11pt;
+    text-align: justify;
+
+    display: block;
+    display: -webkit-box;
+    max-width: 90%;
+    height: 90%;
+    margin: 0 auto;
+    line-height: 1.4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.card-small {
+    background: #FFFFFF;
+    border-radius: 8px;
+    position: relative;
+    width: 100%;
+    margin: 10px auto;
+    padding-bottom: 20px;
+    max-height: 550px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+}
+
+.card-small:hover {
+    box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+}
+
+.card-big {
+    background: #FFFFFF;
+    border-radius: 8px;
+    position: relative;
+    width: 100%;
+    margin: 10px auto;
+    padding-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+}
+
+.new-post {
+    background: #FFFFFF;
+    padding: 20px;
+    font-size: 20pt;
+    text-align: center;
+    border-width: 10px;
+    border-color: #00796B;
+    border-style: double;
+    color: #00796B;
+}
+
+.new-comment {
+    float: right;
+    width: 20% !important;
+}
+
+.open-post {
+    text-decoration: none;
+}
+
+.open-post:hover {
+    text-decoration: none;
+}
+
+.new-post {
+    text-decoration: none !important;
+}
+
+.error {
+    color: red;
+}
+
 .individual-title {
     background: #00796B;
+    display: flex;
+    flex-wrap: wrap;
     color: #FFFFFF;
     border-radius: 8px 8px 0 0;
     padding: 20px;
@@ -68,33 +344,4 @@ header {
 
 .table-text {
     font-size: 18pt;
-}
-
-input[type=text], input[type=password], select {
-    width: 100%;
-    padding: 12px 20px;
-    margin: 8px 0;
-    display: inline-block;
-    border: 4px solid #00796B;
-    border-radius: 8px;
-    box-sizing: border-box;
-}
-
-input[type=submit] {
-    width: 70%;
-    background-color: #00796B;
-    color: white;
-    padding: 14px 20px;
-    margin: 8px 0;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-input[type=text]:focus, input[type=password]:focus {
-    background-color: #80CBC4;
-}
-
-.error {
-    color: red;
 }

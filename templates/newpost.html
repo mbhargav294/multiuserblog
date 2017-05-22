@@ -1,0 +1,25 @@
+{% extends "index.html" %}
+{% block title %} New Post {% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-lg-10 col-md-offset-1 content box-shadow ">
+            <h2 class="individual-title">Enter a new Blog post</h2>
+            <form method="post">
+                <label class="col-lg-12">
+                    <h4>Subject</h4>
+                    <input class="new-post-title" type="text" name="subject" value="{{subject}}" autocomplete="off">
+                </label>
+                <br />
+                <label class="col-lg-12">
+                    <h4>Content</h4>
+                    <textarea class="new-post-text" name="content" placeholder="Enter the content of this article...">{{content}}</textarea>
+                </label>
+                <br>
+                <input type="submit" name="submit">
+                <br/>
+                Changed you mind (Cancel)?<a href="/"> Click here..</a>
+                <p class="error">{{error}}</p>
+            </form>
+        </div>
+    </div>
+{% endblock %}

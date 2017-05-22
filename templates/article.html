@@ -1,0 +1,44 @@
+{% extends "index.html" %}
+    {% block title %}{{content.subject}}{% endblock %}
+
+    {% block content %}
+    <div class="row">
+        <div class="card-big">
+            <div class="individual-title">
+                <div class="art-subject col-lg-9">{{content.subject}}</div>
+                <div class="art-date col-lg-3">
+                    {{content.username}}
+                    <br />
+                    {{content.created}}
+                </div>
+            </div>
+            <p class="big-art-content">
+                {% for line in content.content.splitlines()%}
+                    {{line}}<br />
+                {% endfor %}
+            </p>
+            <!--<p>{{content.key().id()}}</p>-->
+        </div>
+    </div>
+    <div class="row">
+        <h3 class="col-lg-10">Comments - 💬 {{content.comments}}</h3>
+        <a href="/like" class="col-lg-2"/><h2 class="likes">💖 {{content.likes}}</h2></a>
+    </div>
+    <form method="post">
+        {% for i in range(0,content.commentlist|length)%}
+            <div class="comment">
+                <div class="row name">
+                    <b>{{content.commentuser[i]}}</b>
+                </div>
+                <hr />
+                <div class="row">
+                    {{content.commentlist[i]}}
+                </div>
+            </div>
+        {% endfor %}
+        <div class="row">
+            <textarea name="comment" placeholder="enter a comment..."></textarea>
+        </div>
+        <input type="submit" class="new-comment" href="#" value="Comment" />
+    </form>
+    {% endblock %}
