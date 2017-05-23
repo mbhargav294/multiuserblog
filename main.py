@@ -216,7 +216,12 @@ class SignupPage(Handler):
         # user will be added to the database once all the data is verified to
         # be valid
         if (validUsr and validPsw and validEmail and pswMatch):
-            existing = Users.get_by_key_name(usrname)
+            users = Users.all()
+            existing = None
+            for user in users:
+                if user.username == usrname:
+                    existing = user
+                    break
             if not existing:
                 data = Users(username=usrname,
                              password=make_pw_hash(usrname, psw),
