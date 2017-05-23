@@ -120,7 +120,7 @@ a:hover {
 hr{
     display: block;
     margin-top: 2em;
-    width: 95%;
+    width: 100%;
     margin-bottom: 0;
     margin-left: auto;
     margin-right: auto;
@@ -135,6 +135,7 @@ hr{
 .comment {
     width: 90%;
     margin: 0 auto;
+    margin-top: 20px;
     padding: 10px;
 }
 
@@ -256,10 +257,10 @@ hr{
 
 .card-big {
     background: #FFFFFF;
-    border-radius: 8px;
+    border-radius: 0 0 8px 8px;
     position: relative;
     width: 100%;
-    margin: 10px auto;
+    margin: 0 auto;
     padding-bottom: 20px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
 }
@@ -301,7 +302,6 @@ hr{
     display: flex;
     flex-wrap: wrap;
     color: #FFFFFF;
-    border-radius: 8px 8px 0 0;
     padding: 20px;
     margin-top: 0;
     margin-bottom: 20px;
@@ -350,4 +350,54 @@ hr{
 
 .table-text {
     font-size: 18pt;
+}
+
+.sidenav {
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    top: 80px;
+    left: 0;
+    background-color: #004D40;
+    overflow-x: hidden;
+    transition: 0.5s;
+}
+
+.sidenav h2 {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    color: #FFFFFF;
+    display: block;
+    transition: 0.3s;
+}
+
+.sidenav p {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 16pt;
+    color: #FFFFFF;
+    display: block;
+    transition: 0.3s;
+}
+
+.sidenav p:hover, .offcanvas p:focus{
+    color: #818181;
+}
+
+
+@media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav p {font-size: 12pt;}
+}
+
+.legend {
+    font-size:30px;
+    cursor:pointer;
+    position: fixed;
+    left: 0;
+    top: 150px;
+    writing-mode: tb-rl;
+    padding: 10px 0 10px 0;
+    color: #FFFFFF;
+    background: #004D40;
 }

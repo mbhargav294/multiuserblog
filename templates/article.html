@@ -24,13 +24,13 @@
             </p>
         </div>
     </div>
-    <div class="row" id="{{content.key().id()}}likes">
-        <h3 class="col-lg-10">Comments - 💬 {{content.commentlist|length}}</h3>
+    <div class="row">
+        <h3 class="col-lg-10">Comments - 💬 {{content.comments|length}}</h3>
         <a href="/{{content.key().id()}}/like"
         class="col-lg-2
                 {%if content.userid|string() == user.key().id()|string() %}
                     disabled"/>
-                    <h2 class="likes" style="font-size: 12pt">You got {{content.likeslist|length}} likes</h2>
+                    <h2 class="likes" style="font-size: 12pt">You got {{content.likeslist|length}} like(s)</h2>
                 {%else%}
                     "/>
                     {% if user.key().id() in content.likeslist %}
@@ -43,27 +43,30 @@
         </a>
     </div>
     <a href="/#{{content.key().id()}}" style="color: white; padding: 10px; background-color: #00796B;">← Back to home page</a>
-    {%if content.commentlist|length == 0%}
-        <br />
-        <br />
-        <h5>Sorry, looks like on one left a comment yet!</h5>
-    {%endif%}
     <form method="post">
         <div class="row comment">
             <textarea name="comment" placeholder="enter a comment..."></textarea>
         </div>
         <input type="submit" class="new-comment" href="#" value="Comment" />
-        {% for i in range(0,content.commentlist|length)%}
-            <hr />
-            <div class="comment">
+        <div class="comment" id="comments">
+            {%if comments|length == 0%}
+                <br />
+                <br />
+                <h5>No comment yet, be the first one to leave a comment!</h5>
+            {%endif%}
+            {% for comment in comments%}
+                <hr />
                 <div class="row name">
-                    <b>{{content.commentuser[i]}}</b>
+                    <b>{{comment.username}}</b>
+                    {% if comment.userid|string() == user.key().id()|string() %}
+                        <a href="/{{content.key().id()}}/{{comment.key().id()}}/delete"> 🗑️ </a>
+                        <a href="/{{content.key().id()}}/{{comment.key().id()}}/edit"> ✏️ </a>
+                    {% endif %}
                 </div>
                 <div class="row">
-                    {{content.commentlist[i]}}
+                    {{comment.comment}}
                 </div>
-            </div>
-        {% endfor %}
-        <hr />
+            {% endfor %}
+        </div>
     </form>
     {% endblock %}

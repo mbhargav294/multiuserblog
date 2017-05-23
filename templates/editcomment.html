@@ -1,0 +1,22 @@
+{% extends "index.html" %}
+{% block title %} Edit Comment {% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-lg-10 col-md-offset-1 content box-shadow ">
+            <h2 class="individual-title">Edit your comment</h2>
+            <form method="post">
+                <label class="col-lg-12">
+                    <h4>Comment</h4>
+                    <div class="row comment">
+                        <textarea name="comment" placeholder="enter a comment...">{{comment}}</textarea>
+                    </div>
+                </label>
+                <br>
+                <input type="submit" name="submit">
+                <br/>
+                Changed you mind (Cancel)?<a href="/{{contentid}}#comments"> Click here.. </a>
+                <p class="error">{{error}}</p>
+            </form>
+        </div>
+    </div>
+{% endblock %}

@@ -14,7 +14,7 @@
                     <div class="card-small">
                         <a href="/{{content.key().id()}}" id="{{content.key().id()}}" class="open-post">
                             <div class="individual-title">
-                                <div class="art-subject col-lg-9">🔗 {%if user.username == content.username%}👤 ✏️{%else%}👥{%endif%} {{content.subject}}</div>
+                                <div class="art-subject col-lg-9">{%if user.username == content.username%}👤 ✏️{%else%}👥{%endif%} {{content.subject}}</div>
                                 <div class="art-date col-lg-3">
                                     {{content.username}}
                                     <br />
@@ -28,7 +28,7 @@
                             {% endfor %}
                         </p>
                         <br />
-                        <a href="/{{content.key().id()}}" class="art-content">Show more...</a>
+                        <a href="/{{content.key().id()}}" class="art-content">🔗 Show more...</a>
                         <hr />
                         <div class="actions" id="{{content.key().id()}}likes">
                             <div class="action"/>
@@ -41,14 +41,14 @@
                                             💖
                                         {% else %}
                                             {%if content.userid|string() == user.key().id()|string() %}
-                                                Likes - 
+                                                Likes -
                                             {%else%}
                                                 💔
                                             {%endif%}
                                         {% endif %}
                                         {{content.likeslist|length}}
                                     </a>
-                                    <a>&nbsp; 💬 {{content.commentlist|length}}</a>
+                                    <a>&nbsp; 💬 {{content.comments|length}}</a>
                                 </div>
                             </div>
                         </div>

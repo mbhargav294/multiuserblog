@@ -91,9 +91,15 @@ class Content(db.Model):
     userid = db.StringProperty(required = True)
     username = db.StringProperty(required = True)
     likeslist = db.ListProperty(long)
-    commentlist = db.StringListProperty(required = True)
-    commentuser = db.StringListProperty(required = True)
+    comments = db.StringListProperty(required = True)
     created = db.DateTimeProperty(auto_now_add = True)
+
+class Comments(db.Model):
+    userid = db.StringProperty(required = True)
+    username = db.StringProperty(required = True)
+    comment = db.StringProperty(required = True)
+    created = db.DateTimeProperty(auto_now_add = True)
+
 
 class SignupPage(Handler):
 
@@ -191,7 +197,9 @@ class LoginPage(Handler):
                 for user in users.run(limit=1):
                     #logging.info(str(user.key().id()))
                     if check_pw(user.username,psw,user.password):
-                        self.response.headers.add_header('Set-Cookie', 'user_id=%s; Path=/' % make_secure_val(str(user.key().id())))
+                        self.response.headers.add_header('Set-Cookie',
+                                                        'user_id=%s; Path=/' %
+                                                        make_secure_val(str(user.key().id())))
                         time.sleep(0.2)
                         self.redirect("/")
                     else:
@@ -273,8 +281,7 @@ class NewPost(Handler):
                             userid=id,
                             username=user.username,
                             likeslist=[],
-                            commentlist=[],
-                            commentuser=[])
+                            comments=[])
                 a.put()
                 time.sleep(0.2)
                 self.redirect("/" + str(a.key().id()))
@@ -291,8 +298,13 @@ class SinglePost(Handler):
         else:
             user=Users.get_by_id(long(id))
             content = Content.get_by_id(long(artId))
+            comments = []
+            for commentid in content.comments:
+                comments.append(Comments.get_by_id(long(commentid)))
+            #comments= Comments.all()
             self.render("article.html", content=content,
                                         user=user,
+                                        comments=comments,
                                         validUser=True)
 
     def get(self, product_id):
@@ -313,11 +325,14 @@ class SinglePost(Handler):
             comment = self.request.get("comment")
             content = Content.get_by_id(long(product_id))
             if content and comment and len(comment) >= 0 and len(comment) < 200:
-                content.commentlist = [comment] + content.commentlist
-                content.commentuser = [user.username] + content.commentuser
+                comment = Comments(comment=comment,
+                                userid=str(user.key().id()),
+                                username=user.username)
+                comment.put()
+                content.comments = [str(comment.key().id())] + content.comments
                 content.put()
                 time.sleep(0.2)
-                self.redirect("/"+product_id)
+                self.redirect("/%s#comments"%product_id)
 
 class LikePost(Handler):
 
@@ -403,6 +418,59 @@ class EditPost(Handler):
                 error="All fields are required"
                 self.render_front(content, error)
 
+class DeleteComment(Handler):
+    def get(self, product_id, comment_id):
+        id = is_valid_user(self)
+        if not id:
+            time.sleep(0.2)
+            self.redirect('/login')
+        else:
+            content = Content.get_by_id(long(product_id))
+            comment = Comments.get_by_id(long(comment_id))
+            if (comment.userid != id):
+                time.sleep(0.2)
+                self.redirect('/'+product_id)
+            else:
+                content.comments.remove(str(comment_id))
+                comment.delete()
+                content.put()
+                time.sleep(0.2)
+                self.redirect('/%s#comments'%product_id)
+
+class EditComment(Handler):
+    def get(self, product_id, comment_id):
+        id = is_valid_user(self)
+        if not id:
+            time.sleep(0.2)
+            self.redirect('/login')
+        else:
+            content = Content.get_by_id(long(product_id))
+            comment = Comments.get_by_id(long(comment_id))
+            if (comment.userid != id):
+                time.sleep(0.2)
+                self.redirect('/'+product_id)
+            else:
+                self.render("editcomment.html", comment = comment.comment,
+                                                contentid = content.key().id())
+
+    def post(self, product_id, comment_id):
+        id = is_valid_user(self)
+        if not id:
+            time.sleep(0.2)
+            self.redirect('/login')
+        else:
+            edit_comment = self.request.get("comment")
+            content = Content.get_by_id(long(product_id))
+            comment = Comments.get_by_id(long(comment_id))
+            if (comment.userid != id):
+                time.sleep(0.2)
+                self.redirect('/'+product_id)
+            else:
+                comment.comment=edit_comment
+                comment.put()
+                self.redirect("/%s#comments" % product_id)
+
+
 app = webapp2.WSGIApplication([
     ('/logout', LogoutPage),
     ('/login', LoginPage),
@@ -412,5 +480,7 @@ app = webapp2.WSGIApplication([
     (r'/(\d+)', SinglePost),
     (r'/(\d+)/like', LikePost),
     (r'/(\d+)/delete', DeletePost),
-    (r'/(\d+)/edit', EditPost)
+    (r'/(\d+)/edit', EditPost),
+    (r'/(\d+)/(\d+)/delete', DeleteComment),
+    (r'/(\d+)/(\d+)/edit', EditComment)
 ], debug=True)

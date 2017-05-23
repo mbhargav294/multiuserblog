@@ -8,6 +8,26 @@
     <link href="https://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet">
 </head>
 <body>
+    <nav id="mySidenav" class="sidenav" onmouseover="openNav()" onmouseout="closeNav()">
+        <h2>Legend</h2>
+        <p>👤 - Posted by you</p>
+        <p>👥 - Posted by others</p>
+        <p>✏️ - Edit</p>
+        <p>⏰ - Date and Time</p>
+        <p>💬 - Comment</p>
+        <p>💖 - Liked by you</p>
+        <p>💔 - Not yet liked by you</p>
+    </nav>
+    <span class="legend" onmouseover="openNav()" onmouseout="closeNav()">Legend</span>
+    <script>
+        function openNav() {
+            document.getElementById("mySidenav").style.width = "250px";
+        }
+
+        function closeNav() {
+            document.getElementById("mySidenav").style.width = "0";
+        }
+    </script>
     <header class="container box-shadow">
         <div class="row">
             <div class="col-lg-2">
