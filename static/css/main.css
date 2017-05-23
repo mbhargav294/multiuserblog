@@ -101,6 +101,10 @@ a:hover {
    user-select: none;
 }
 
+header * a {
+    color: #FFFFFF;
+}
+
 
 hr{
     display: block;

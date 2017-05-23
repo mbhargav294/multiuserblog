@@ -32,11 +32,11 @@
                         <hr />
                         <div class="actions" id="{{content.key().id()}}likes">
                             <div class="action"/>
-                                <div class="
-                                {%if content.userid|string() == user.key().id()|string() %}
-                                    disabled
-                                {% endif %}" >
-                                    <a href="/{{content.key().id()}}/like">
+                                <div>
+                                    <a href="/{{content.key().id()}}/like" class="
+                                        {%if content.userid|string() == user.key().id()|string() %}
+                                            disabled
+                                        {% endif %}">
                                         {% if user.key().id() in content.likeslist %}
                                             💖
                                         {% else %}
