@@ -554,6 +554,7 @@ class EditPost(Handler):
             if blogpost is None:
                 return self.error(404)
             if blogpost.userid != user_id:
+                time.sleep(0.2)
                 return self.redirect('/')
             # if the edited post is submitted by the user, new post data
             # is verified and updated in the datastore
