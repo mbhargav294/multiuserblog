@@ -611,4 +611,4 @@ app = webapp2.WSGIApplication([
     (r'/(\d+)/edit', EditPost),
     (r'/(\d+)/(\d+)/delete', DeleteComment),
     (r'/(\d+)/(\d+)/edit', EditComment)
-], debug=True)
+], debug=False)
