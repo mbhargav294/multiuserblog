@@ -33,7 +33,7 @@ import time
 from google.appengine.ext import db
 
 # Put this secret in another module which is not published
-SECRET = "MADHU_VYSHNAVI"
+SECRET = "PUT_SECRET_KEY_HERE"
 
 template_dir = os.path.join(os.path.dirname(__file__), 'templates')
 jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_dir),
