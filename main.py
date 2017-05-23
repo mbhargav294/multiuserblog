@@ -103,9 +103,9 @@ def check_pw(name, gotPass, hadPass):
 # return: string
 def is_valid_user(self):
     userid = self.request.cookies.get('user_id', '')
-    id = check_secure_val(userid)
-    if id:
-        return id
+    user_id = check_secure_val(userid)
+    if user_id:
+        return user_id
     else:
         self.response.headers.add_header('Set-Cookie',
                                          'user_id=%s; Path=/' % '')
@@ -187,18 +187,18 @@ class SignupPage(Handler):
     def get(self):
         # verifying the cookie
         userid = self.request.cookies.get('user_id', '')
-        id = check_secure_val(userid)
-        if id:
-            user = Users.get_by_id(long(id))
+        user_id = check_secure_val(userid)
+        if user_id:
+            user = Users.get_by_id(long(user_id))
             if user:
                 time.sleep(0.2)
-                self.redirect("/")
+                return self.redirect("/")
 
-        self.render("signup.html", validUsr=True,
-                    validEmail=True,
-                    validPsw=True,
-                    pswMatch=True,
-                    validUser=False)
+        return self.render("signup.html", validUsr=True,
+                           validEmail=True,
+                           validPsw=True,
+                           pswMatch=True,
+                           validUser=False)
 
     # post method to handel the signup page when /signup is opened
     def post(self):
@@ -226,22 +226,22 @@ class SignupPage(Handler):
                 cookie = 'user_id=%s;Path=/' % secure_val
                 self.response.headers.add_header('Set-Cookie', cookie)
                 time.sleep(0.2)
-                self.redirect("/")
+                return self.redirect("/")
             else:
-                self.render("signup.html", usrname="", mail="",
-                            validUsr=validUsr,
-                            validEmail=validEmail,
-                            validPsw=validPsw,
-                            pswMatch=pswMatch,
-                            userExists=True,
-                            validUser=False)
+                return self.render("signup.html", usrname="", mail="",
+                                   validUsr=validUsr,
+                                   validEmail=validEmail,
+                                   validPsw=validPsw,
+                                   pswMatch=pswMatch,
+                                   userExists=True,
+                                   validUser=False)
         else:
-            self.render("signup.html", usrname=usrname, mail=mail,
-                        validUsr=validUsr,
-                        validEmail=validEmail,
-                        validPsw=validPsw,
-                        pswMatch=pswMatch,
-                        validUser=False)
+            return self.render("signup.html", usrname=usrname, mail=mail,
+                               validUsr=validUsr,
+                               validEmail=validEmail,
+                               validPsw=validPsw,
+                               pswMatch=pswMatch,
+                               validUser=False)
 
 
 class LoginPage(Handler):
@@ -249,15 +249,15 @@ class LoginPage(Handler):
     def get(self):
         # verifying the cookie
         userid = self.request.cookies.get('user_id', '')
-        id = check_secure_val(userid)
+        user_id = check_secure_val(userid)
         # if user is already logged in he/she will be directly taken
         # to the homepage
-        if id:
-            user = Users.get_by_id(long(id))
+        if user_id:
+            user = Users.get_by_id(long(user_id))
             if user:
                 time.sleep(0.2)
-                self.redirect("/")
-        self.render("login.html", validData=True, validUser=False)
+                return self.redirect("/")
+        return self.render("login.html", validData=True, validUser=False)
 
     # post method to handel the signup page when /login is opened
     def post(self):
@@ -278,15 +278,15 @@ class LoginPage(Handler):
                 cookie_str = 'user_id=%s; Path=/' % cookie
                 self.response.headers.add_header('Set-Cookie', cookie_str)
                 time.sleep(0.2)
-                self.redirect("/")
+                return self.redirect("/")
             else:
                 logging.info("MADHU BHARGAV IS VERY GOOD")
-                self.render("login.html", validData=False,
-                            validUser=False)
+                return self.render("login.html", validData=False,
+                                   validUser=False)
         else:
             logging.info("MADHU BHARGAV IS VERY GOOD")
-            self.render("login.html", validData=False,
-                        validUser=False)
+            return self.render("login.html", validData=False,
+                               validUser=False)
 
 # in this page all the posts are displayed, all posts made by all the users
 
@@ -295,21 +295,21 @@ class WelcomePage(Handler):
     # get method to handel the signup page when / is opened
     def get(self):
         # verifying the cookie
-        id = is_valid_user(self)
-        if not id:
+        user_id = is_valid_user(self)
+        if not user_id:
             time.sleep(0.2)
-            self.redirect('/login')
+            return self.redirect('/login')
         else:
-            user = Users.get_by_id(long(id))
+            user = Users.get_by_id(long(user_id))
             if user:
                 contents = Content.all()
                 contents.order('-created')
-                self.render("welcome.html", user=user,
-                            validUser=True,
-                            contents=contents)
+                return self.render("welcome.html", user=user,
+                                   validUser=True,
+                                   contents=contents)
             else:
                 time.sleep(0.2)
-                self.redirect('/login')
+                return self.redirect('/login')
 
 # this handler handles the user logout event
 
@@ -321,7 +321,7 @@ class LogoutPage(Handler):
         self.response.headers.add_header('Set-Cookie',
                                          'user_id=%s; Path=/' % '')
         time.sleep(0.2)
-        self.redirect("/login")
+        return self.redirect("/login")
 
 # this handeler is used to handel the event of creating a new post by a
 # valid user
@@ -329,32 +329,32 @@ class LogoutPage(Handler):
 
 class NewPost(Handler):
     def render_front(self, subject="", content="", error=""):
-        id = is_valid_user(self)
-        if not id:
+        user_id = is_valid_user(self)
+        if not user_id:
             time.sleep(0.2)
-            self.redirect('/login')
+            return self.redirect('/login')
         else:
-            user = Users.get_by_id(long(id))
+            user = Users.get_by_id(long(user_id))
             if user:
                 contents = Content.all()
-                self.render("newpost.html", subject=subject,
-                            content=content,
-                            error=error,
-                            user=user,
-                            validUser=True)
+                return self.render("newpost.html", subject=subject,
+                                   content=content,
+                                   error=error,
+                                   user=user,
+                                   validUser=True)
             else:
                 time.sleep(0.2)
-                self.redirect('/login')
+                return self.redirect('/login')
 
     # get method to handel the signup page when /newpost is opened
     def get(self):
         # verifying the cookie
-        id = is_valid_user(self)
-        if not id:
+        user_id = is_valid_user(self)
+        if not user_id:
             time.sleep(0.2)
-            self.redirect('/login')
+            return self.redirect('/login')
         else:
-            self.render_front()
+            return self.render_front()
 
     # post method to handel the signup page when /signup is opened
     def post(self):
@@ -364,25 +364,25 @@ class NewPost(Handler):
         # checking the validity of entered post content
         if subject and content:
             # verifying the cookie
-            id = is_valid_user(self)
-            if not id:
+            user_id = is_valid_user(self)
+            if not user_id:
                 time.sleep(0.2)
-                self.redirect('/login')
+                return self.redirect('/login')
             else:
-                user = Users.get_by_id(long(id))
+                user = Users.get_by_id(long(user_id))
                 # post the data entered by the user to datastore
                 a = Content(subject=subject,
                             content=content,
-                            userid=id,
+                            userid=user_id,
                             username=user.username,
                             likeslist=[],
                             comments=[])
                 a.put()
                 time.sleep(0.2)
-                self.redirect("/" + str(a.key().id()))
+                return self.redirect("/" + str(a.key().id()))
         else:
             error = "All fields are required"
-            self.render_front(subject, content, error)
+            return self.render_front(subject, content, error)
 
 # this page is used to display information regarding each individual post
 
@@ -390,44 +390,46 @@ class NewPost(Handler):
 class SinglePost(Handler):
     def render_front(self, artId=""):
         # verifying the cookie
-        id = is_valid_user(self)
-        if not id:
+        user_id = is_valid_user(self)
+        if not user_id:
             time.sleep(0.2)
-            self.redirect('/login')
+            return self.redirect('/login')
         else:
-            user = Users.get_by_id(long(id))
+            user = Users.get_by_id(long(user_id))
             content = Content.get_by_id(long(artId))
+            if content is None:
+                return self.error(404)
             # this populating comments for this pirticual post
             comments = []
             for commentid in content.comments:
                 comments.append(Comments.get_by_id(long(commentid)))
             if user:
-                self.render("article.html", content=content,
-                            user=user,
-                            comments=comments,
-                            validUser=True)
+                return self.render("article.html", content=content,
+                                   user=user,
+                                   comments=comments,
+                                   validUser=True)
             else:
-                self.redirect('/')
+                return self.redirect('/')
 
     # get method to handel the signup page when /(postid) is opened
     def get(self, product_id):
         # verifying the cookie
-        id = is_valid_user(self)
-        if not id:
+        user_id = is_valid_user(self)
+        if not user_id:
             time.sleep(0.2)
-            self.redirect('/login')
+            return self.redirect('/login')
         else:
-            self.render_front(artId=product_id)
+            return self.render_front(artId=product_id)
 
     # post method to handel the signup page when /(postid) is opened
     def post(self, product_id):
         # verifying the cookie
-        id = is_valid_user(self)
-        if not id:
+        user_id = is_valid_user(self)
+        if not user_id:
             time.sleep(0.2)
-            self.redirect('/login')
+            return self.redirect('/login')
         else:
-            user = Users.get_by_id(long(id))
+            user = Users.get_by_id(long(user_id))
             comment = self.request.get("comment")
             content = Content.get_by_id(long(product_id))
             # Handeling the comments form
@@ -444,107 +446,118 @@ class SinglePost(Handler):
                 content.comments = [str(comment.key().id())] + content.comments
                 content.put()
                 time.sleep(0.2)
-                self.redirect("/%s#comments" % product_id)
+                return self.redirect("/%s#comments" % product_id)
             else:
-                self.redirect("/%s" % product_id)
+                return self.redirect("/%s" % product_id)
 
 
 class LikePost(Handler):
     # get method to handel the signup page when /(postid)/like is opened
     def get(self, product_id):
         # verifying the cookie
-        id = is_valid_user(self)
-        if not id:
+        user_id = is_valid_user(self)
+        if not user_id:
             time.sleep(0.2)
-            self.redirect('/login')
+            return self.redirect('/login')
         else:
             content = Content.get_by_id(long(product_id))
+            if content is None:
+                return self.error(404)
             referrer = self.request.headers.get('referer')
             # when user hits the like button following piece of code
             # is executed
-            if id != content.userid:
-                id = long(id)
+            if user_id != content.userid:
+                user_id = long(user_id)
                 # if user already likes the post, we remove the user
                 # from likes likeslist
                 # otherwise we add the user to the likeslist
-                if id in content.likeslist:
-                    content.likeslist.remove(id)
+                if user_id in content.likeslist:
+                    content.likeslist.remove(user_id)
                 else:
-                    content.likeslist.append(id)
+                    content.likeslist.append(user_id)
                 content.put()
                 time.sleep(0.2)
-            self.redirect("%s#%slikes" % (referrer, product_id))
+            return self.redirect("%s#%slikes" % (referrer, product_id))
 
 
 class DeletePost(Handler):
     # get method to handel the signup page when /(postid)/delete is opened
     def get(self, product_id):
         # verifying the cookie
-        id = is_valid_user(self)
-        if not id:
+        user_id = is_valid_user(self)
+        if not user_id:
             time.sleep(0.2)
-            self.redirect('/login')
+            return self.redirect('/login')
         else:
             content = Content.get_by_id(long(product_id))
+            if content is None:
+                return self.error(404)
             # first we check for user validity and if the user is valid to
             # take this action, we go ahead and delete tha entry from
             # data store otherwise, we take the user back to the post page
-            if (content.userid != id):
+            if (content.userid != user_id):
                 time.sleep(0.2)
-                self.redirect('/' + product_id)
+                return self.redirect('/' + product_id)
             else:
-                if content.comments:
+                if content and content.comments:
                     for comment_id in content.comments:
                         comment = long(comment_id)
                         c = Comments.get_by_id(comment)
                         c.delete()
                 content.delete()
                 time.sleep(0.2)
-                self.redirect('/')
+                return self.redirect('/')
 
 
 class EditPost(Handler):
     def render_front(self, subject="", content="", error="", artId=""):
         # verifying the cookie
-        id = is_valid_user(self)
-        if not id:
+        user_id = is_valid_user(self)
+        if not user_id:
             time.sleep(0.2)
-            self.redirect('/login')
+            return self.redirect('/login')
         else:
             # renders the form to edit the post
-            user = Users.get_by_id(long(id))
-            self.render("editpost.html", subject=subject,
-                        content=content,
-                        user=user,
-                        error=error,
-                        validUser=True)
+            user = Users.get_by_id(long(user_id))
+            return self.render("editpost.html", subject=subject,
+                               content=content,
+                               user=user,
+                               error=error,
+                               validUser=True)
 
     # get method to handel the signup page when /(postid)/edit is opened
     def get(self, product_id):
-        id = is_valid_user(self)
-        if not id:
+        user_id = is_valid_user(self)
+        if not user_id:
             time.sleep(0.2)
-            self.redirect('/login')
+            return self.redirect('/login')
         else:
             content = Content.get_by_id(long(product_id))
-            if content.userid == id:
-                self.render_front(subject=content.subject,
-                                  content=content.content)
+            if content is None:
+                return self.error(404)
+            if content and content.userid == user_id:
+                return self.render_front(subject=content.subject,
+                                         content=content.content)
             else:
                 time.sleep(0.2)
-                self.redirect('/' + product_id)
+                return self.redirect('/' + product_id)
 
     # post method to handel the signup page when /(postid)/edit is opened
     def post(self, product_id):
         # verifying the cookie
-        id = is_valid_user(self)
+        user_id = is_valid_user(self)
         subject = self.request.get("subject")
         content = self.request.get("content")
-        if not id:
+        if not user_id:
             time.sleep(0.2)
-            self.redirect('/login')
+            return self.redirect('/login')
         else:
             blogpost = Content.get_by_id(long(product_id))
+            if blogpost is None:
+                return self.error(404)
+            if blogpost.userid != user_id:
+                return self.render_front(subject=blogpost.subject,
+                                         content=blogpost.content)
             # if the edited post is submitted by the user, new post data
             # is verified and updated in the datastore
             if subject and content and len(subject) > 0 and len(content) > 0:
@@ -552,14 +565,16 @@ class EditPost(Handler):
                 blogpost.content = content
                 blogpost.put()
                 time.sleep(0.2)
-                self.redirect("/" + str(blogpost.key().id()))
+                return self.redirect("/" + str(blogpost.key().id()))
             else:
                 error = "All fields are required"
                 content = Content.get_by_id(long(product_id))
-                if content.userid == id:
-                    self.render_front(subject=content.subject,
-                                      content=content.content,
-                                      error=error)
+                if content and content.userid == user_id:
+                    return self.render_front(subject=content.subject,
+                                             content=content.content,
+                                             error=error)
+                else:
+                    return self.error(404)
 
 
 class DeleteComment(Handler):
@@ -567,22 +582,24 @@ class DeleteComment(Handler):
     # /(postid)/(commentid)/delete is opened
     def get(self, product_id, comment_id):
         # verifying the cookie
-        id = is_valid_user(self)
-        if not id:
+        user_id = is_valid_user(self)
+        if not user_id:
             time.sleep(0.2)
-            self.redirect('/login')
+            return self.redirect('/login')
         else:
             content = Content.get_by_id(long(product_id))
             comment = Comments.get_by_id(long(comment_id))
-            if (comment.userid != id):
+            if (content is None) or (comment is None):
+                return self.error(404)
+            if (comment.userid != user_id):
                 time.sleep(0.2)
-                self.redirect('/' + product_id)
+                return self.redirect('/' + product_id)
             else:
                 content.comments.remove(str(comment_id))
                 comment.delete()
                 content.put()
                 time.sleep(0.2)
-                self.redirect('/%s#comments' % product_id)
+                return self.redirect('/%s#comments' % product_id)
 
 
 class EditComment(Handler):
@@ -590,46 +607,54 @@ class EditComment(Handler):
     # /(postid)/(commentid)/edit is opened
     def get(self, product_id, comment_id):
         # verifying the cookie
-        id = is_valid_user(self)
-        if not id:
+        user_id = is_valid_user(self)
+        if not user_id:
             time.sleep(0.2)
-            self.redirect('/login')
+            return self.redirect('/login')
         else:
+            user = Users.get_by_id(long(user_id))
             content = Content.get_by_id(long(product_id))
             comment = Comments.get_by_id(long(comment_id))
-            if (comment.userid != id):
+            if (content is None) or (comment is None):
+                return self.error(404)
+            if (comment.userid != user_id):
                 time.sleep(0.2)
-                self.redirect('/' + product_id)
+                return self.redirect('/' + product_id)
             else:
-                self.render("editcomment.html", comment=comment.comment,
-                            contentid=content
-                            .key()
-                            .id())
+                return self.render("editcomment.html", user=user,
+                                   validUser=True,
+                                   comment=comment.comment,
+                                   contentid=content
+                                   .key()
+                                   .id())
 
     # post method to handel the signup page when
     # /(postid)/(commentid)/edit is opened
     def post(self, product_id, comment_id):
         # verifying the cookie
-        id = is_valid_user(self)
-        if not id:
+        user_id = is_valid_user(self)
+        if not user_id:
             time.sleep(0.2)
-            self.redirect('/login')
+            return self.redirect('/login')
         else:
             # validity of the comment is verified and if the comment is
             # completely removed, then it is deleted
             edit_comment = self.request.get("comment")
             content = Content.get_by_id(long(product_id))
             comment = Comments.get_by_id(long(comment_id))
+            if (content is None) or (comment is None):
+                return self.error(404)
             if len(edit_comment) == 0:
-                self.redirect("/%s/%s/delete" % (product_id, comment_id))
+                page = "/%s/%s/delete" % (product_id, comment_id)
+                return self.redirect(page)
             else:
-                if (comment.userid != id):
+                if (comment.userid != user_id):
                     time.sleep(0.2)
-                    self.redirect('/' + product_id)
+                    return self.redirect('/' + product_id)
                 else:
                     comment.comment = edit_comment
                     comment.put()
-                    self.redirect("/%s#comments" % product_id)
+                    return self.redirect("/%s#comments" % product_id)
 
 
 # url handlers handled by webapp2
