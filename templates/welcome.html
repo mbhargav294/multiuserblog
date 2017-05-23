@@ -48,7 +48,7 @@
                                         {% endif %}
                                         {{content.likeslist|length}}
                                     </a>
-                                    <a>&nbsp; 💬 {{content.comments|length}}</a>
+                                    <a href="/{{content.key().id()}}#comments">&nbsp; 💬 {{content.comments|length}}</a>
                                 </div>
                             </div>
                         </div>
