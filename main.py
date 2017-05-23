@@ -33,7 +33,7 @@ import time
 from google.appengine.ext import db
 
 # Put this secret in another module which is not published
-SECRET = "PUT_SECRET_KEY_HERE"
+SECRET = "MADHU_VYSHNAVI"
 
 template_dir = os.path.join(os.path.dirname(__file__), 'templates')
 jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_dir),
@@ -277,8 +277,8 @@ class LoginPage(Handler):
                 if user.username == usrname:
                     our_user = user
                     break
-            verify_psw = check_pw(our_user.username, psw, our_user.password)
             if our_user and verify_psw:
+                verify_psw = check_pw(our_user.username, psw, our_user.password)
                 cookie = make_secure_val(str(our_user.key().id()))
                 cookie_str = 'user_id=%s; Path=/' % cookie
                 self.response.headers.add_header('Set-Cookie', cookie_str)
@@ -673,4 +673,4 @@ app = webapp2.WSGIApplication([
     (r'/(\d+)/edit', EditPost),
     (r'/(\d+)/(\d+)/delete', DeleteComment),
     (r'/(\d+)/(\d+)/edit', EditComment)
-], debug=False)
+], debug=True)
