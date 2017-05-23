@@ -1,8 +1,6 @@
-* {
-    //border: 1px solid red;
-    transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+html, body {
+    height: 100%;
 }
-
 body {
     margin: 0;
     padding: 0;
@@ -36,6 +34,7 @@ input[type=text], input[type=password], select {
     color: #00796B;
     outline: none;
     text-align: left;
+    transition: all 0.3s cubic-bezier(.25,.8,.25,1);
 }
 
 input[type=submit]{
@@ -74,6 +73,7 @@ textarea {
     box-sizing: border-box;
     color: #00796B;
     outline: none;
+    resize: none;
     text-align: left;
 }
 
@@ -90,54 +90,16 @@ main {
 footer {
     background-color: #00796B;
     color: #FFFFFF;
-    position: fixed;
     text-align: center;
     bottom: 0;
-    font-size: 14pt;
-    padding: 10px;
+    font-size: 12pt;
+    padding: 10px 10px 0 10px;
     border-radius: 8px 8px 0 0;
     display: flex;
     flex-wrap: wrap;
     width: 100%;
     margin-top: 10px;
     box-shadow: 0px -10px 10px rgba(0, 0, 0, 0.30);
-}
-
-#like {
-    height: 48px;
-    width: 50%;
-}
-
-.name {
-    font-size: 8pt;
-}
-
-hr{
-    display: block;
-    margin-top: 0.5em;
-    margin-bottom: 0.5em;
-    margin-left: auto;
-    margin-right: auto;
-    border-style: inset;
-    border-width: 1px;
-}
-
-.comment {
-    padding: 20px;
-    margin: 3px;
-    box-shadow:         inset 0 0 4px #000000;
-    border-radius: 8px;
-    background-color: #FFFFFF;
-}
-
-.likes {
-    width: auto;
-    font-size: 24pt;
-    text-align: right;
-}
-
-.likes:hover {
-    text-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
 }
 
 a {
@@ -148,23 +110,68 @@ a:hover {
     text-decoration: none !important;
 }
 
-.actions {
-    position: absolute;
-    width: 20%;
-    display: flex;
-    flex-wrap: wrap;
-    background-color: #80CBC4;
-    bottom: 30px;
-    right: 20px;
+.disabled {
+   pointer-events: none;
+   cursor: default;
+   user-select: none;
+}
+
+
+hr{
+    display: block;
+    margin-top: 2em;
+    width: 95%;
+    margin-bottom: 0;
+    margin-left: auto;
+    margin-right: auto;
+    border-style: inset;
+    border-width: 1px;
+}
+
+.name {
+    font-size: 8pt;
+}
+
+.comment {
+    width: 90%;
+    margin: 0 auto;
     padding: 10px;
-    border-radius: 8px;
+}
+
+.likes {
+    width: auto;
+    font-size: 24pt;
+    text-align: right;
+    transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+}
+
+.likes:hover {
+    text-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+}
+
+
+.actions {
+    cursor: default;
+    font-size: 18pt;
+    width: 100%;
+    display: table;
+    table-layout: fixed;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    -moz-box-shadow:    inset 0 0 10px #00796B;
-    -webkit-box-shadow: inset 0 0 10px #00796B;
-    box-shadow:         inset 0 0 10px #00796B;
+    width: 95%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.action {
+    display:table-cell;
+    vertical-align:middle;
+    padding: 10px;
+    text-align:right;
+    transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+    text-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
 }
 
 .new-post-title {
@@ -236,11 +243,10 @@ a:hover {
 .card-small {
     background: #FFFFFF;
     border-radius: 8px;
-    position: relative;
     width: 100%;
     margin: 10px auto;
-    padding-bottom: 20px;
     max-height: 550px;
+    transition: all 0.3s cubic-bezier(.25,.8,.25,1);
     box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
 }
 

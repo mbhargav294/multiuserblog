@@ -1,5 +1,5 @@
 {% extends "index.html" %}
-{% block title %} {{username}} - MUB {% endblock %}
+{% block title %} {{user.username}} - MUB {% endblock %}
 {% block content %}
         <div class="row">
             <a class="col-lg-12 new-post card-small" href="/newpost">+ Add new post</a>
@@ -11,29 +11,48 @@
             </div>
         {% else %}
             {% for content in contents%}
-                <div class="row">
                     <div class="card-small">
                         <a href="/{{content.key().id()}}" id="{{content.key().id()}}" class="open-post">
                             <div class="individual-title">
-                                <div class="art-subject col-lg-9">🔗 {{content.subject}}</div>
+                                <div class="art-subject col-lg-9">🔗 {%if user.username == content.username%}👤 ✏️{%else%}👥{%endif%} {{content.subject}}</div>
                                 <div class="art-date col-lg-3">
                                     {{content.username}}
                                     <br />
-                                    {{content.created}}
+                                    ⏰{{content.created.strftime(' %Y-%m-%d :: %H:%M')}}
                                 </div>
                             </div>
                         </a>
-                        <p class="big-art-content">
+                        <p class="art-content">
                             {% for line in content.content.splitlines()%}
                                 {{line}}<br />
                             {% endfor %}
                         </p>
-                        <div class="actions">
-                            <h1 id="like"/> 💖 {{content.likes}} </h1>
-                            <h1 id="like"/>💬 {{content.comments}}</h1>
+                        <br />
+                        <a href="/{{content.key().id()}}" class="art-content">Show more...</a>
+                        <hr />
+                        <div class="actions" id="{{content.key().id()}}likes">
+                            <div class="action"/>
+                                <div class="
+                                {%if content.userid|string() == user.key().id()|string() %}
+                                    disabled
+                                {% endif %}" >
+                                    <a href="/{{content.key().id()}}/like">
+                                        {% if user.key().id() in content.likeslist %}
+                                            💖
+                                        {% else %}
+                                            {%if content.userid|string() == user.key().id()|string() %}
+                                                Likes - 
+                                            {%else%}
+                                                💔
+                                            {%endif%}
+                                        {% endif %}
+                                        {{content.likeslist|length}}
+                                    </a>
+                                    <a>&nbsp; 💬 {{content.commentlist|length}}</a>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
             {% endfor %}
         {% endif %}
 {% endblock %}

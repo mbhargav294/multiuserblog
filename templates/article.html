@@ -5,7 +5,12 @@
     <div class="row">
         <div class="card-big">
             <div class="individual-title">
-                <div class="art-subject col-lg-9">{{content.subject}}</div>
+                <div class="art-subject col-lg-9">
+                    {%if content.userid|string() == user.key().id()|string() %}
+                        <a href="{{content.key().id()}}/delete">🗑️</a>
+                        <a href="{{content.key().id()}}/edit">✏️</a>
+                    {%endif%}
+                    {{content.subject}}</div>
                 <div class="art-date col-lg-3">
                     {{content.username}}
                     <br />
@@ -17,28 +22,48 @@
                     {{line}}<br />
                 {% endfor %}
             </p>
-            <!--<p>{{content.key().id()}}</p>-->
         </div>
     </div>
-    <div class="row">
-        <h3 class="col-lg-10">Comments - 💬 {{content.comments}}</h3>
-        <a href="/like" class="col-lg-2"/><h2 class="likes">💖 {{content.likes}}</h2></a>
+    <div class="row" id="{{content.key().id()}}likes">
+        <h3 class="col-lg-10">Comments - 💬 {{content.commentlist|length}}</h3>
+        <a href="/{{content.key().id()}}/like"
+        class="col-lg-2
+                {%if content.userid|string() == user.key().id()|string() %}
+                    disabled"/>
+                    <h2 class="likes" style="font-size: 12pt">You got {{content.likeslist|length}} likes</h2>
+                {%else%}
+                    "/>
+                    {% if user.key().id() in content.likeslist %}
+                        <h2 class="likes">💖{{content.likeslist|length}}</h2>
+                    {% else %}
+                        <h2 class="likes"><b style="font-size: 24pt">💔</b> {{content.likeslist|length}}</h2>
+                    {% endif %}
+                {% endif %}
+
+        </a>
     </div>
+    <a href="/#{{content.key().id()}}" style="color: white; padding: 10px; background-color: #00796B;">← Back to home page</a>
+    {%if content.commentlist|length == 0%}
+        <br />
+        <br />
+        <h5>Sorry, looks like on one left a comment yet!</h5>
+    {%endif%}
     <form method="post">
+        <div class="row comment">
+            <textarea name="comment" placeholder="enter a comment..."></textarea>
+        </div>
+        <input type="submit" class="new-comment" href="#" value="Comment" />
         {% for i in range(0,content.commentlist|length)%}
+            <hr />
             <div class="comment">
                 <div class="row name">
                     <b>{{content.commentuser[i]}}</b>
                 </div>
-                <hr />
                 <div class="row">
                     {{content.commentlist[i]}}
                 </div>
             </div>
         {% endfor %}
-        <div class="row">
-            <textarea name="comment" placeholder="enter a comment..."></textarea>
-        </div>
-        <input type="submit" class="new-comment" href="#" value="Comment" />
+        <hr />
     </form>
     {% endblock %}

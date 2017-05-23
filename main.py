@@ -23,6 +23,7 @@ import string
 import hashlib
 import re
 import logging
+import time
 from google.appengine.ext import db
 
 #Put this secret in another module that we dont publish
@@ -58,6 +59,15 @@ def check_pw(name, gotPass, hadPass):
         logging.info(gotHash)
         return hadHash == gotHash
 
+def is_valid_user(self):
+    userid = self.request.cookies.get('user_id', '')
+    id=check_secure_val(userid)
+    if id:
+        return id
+    else:
+        self.response.headers.add_header('Set-Cookie',
+                                        'user_id=%s; Path=/' % '')
+
 class Handler(webapp2.RequestHandler):
     def write(self, *a, **kw):
         self.response.out.write(*a, **kw)
@@ -80,8 +90,7 @@ class Content(db.Model):
     content = db.TextProperty(required = True)
     userid = db.StringProperty(required = True)
     username = db.StringProperty(required = True)
-    likes = db.IntegerProperty(required = True)
-    comments = db.IntegerProperty(required = True)
+    likeslist = db.ListProperty(long)
     commentlist = db.StringListProperty(required = True)
     commentuser = db.StringListProperty(required = True)
     created = db.DateTimeProperty(auto_now_add = True)
@@ -112,6 +121,7 @@ class SignupPage(Handler):
         if id:
             user = Users.get_by_id(long(id))
             if user:
+                time.sleep(0.2)
                 self.redirect("/")
 
         self.render("signup.html", validUsr=True,
@@ -135,9 +145,12 @@ class SignupPage(Handler):
         if (validUsr and validPsw and validEmail and pswMatch):
             existing = Users.get_by_key_name(usrname)
             if not existing:
-                data = Users(username=usrname, password=make_pw_hash(usrname,psw), email=mail)
+                data = Users(username=usrname,
+                            password=make_pw_hash(usrname,psw),
+                            email=mail)
                 data.put()
                 self.response.headers.add_header('Set-Cookie', 'user_id=%s; Path=/' % make_secure_val(str(data.key().id())))
+                time.sleep(0.2)
                 self.redirect("/")
             else:
                 self.render("signup.html", usrname="", mail="",
@@ -162,6 +175,7 @@ class LoginPage(Handler):
         if id:
             user = Users.get_by_id(long(id))
             if user:
+                time.sleep(0.2)
                 self.redirect("/")
         self.render("login.html", validData=True, validUser=False)
 
@@ -178,6 +192,7 @@ class LoginPage(Handler):
                     #logging.info(str(user.key().id()))
                     if check_pw(user.username,psw,user.password):
                         self.response.headers.add_header('Set-Cookie', 'user_id=%s; Path=/' % make_secure_val(str(user.key().id())))
+                        time.sleep(0.2)
                         self.redirect("/")
                     else:
                         error = True
@@ -192,95 +207,201 @@ class LoginPage(Handler):
 
 class WelcomePage(Handler):
     def get(self):
-        userid = self.request.cookies.get('user_id', '')
-        id = check_secure_val(userid)
-        if id:
+        id = is_valid_user(self)
+        if not id:
+            time.sleep(0.2)
+            self.redirect('/login')
+        else:
             user = Users.get_by_id(long(id))
             if user:
                 contents = Content.all()
-                self.render("welcome.html", username=user.username,
+                contents.order('-created')
+                self.render("welcome.html", user=user,
                                             validUser=True,
                                             contents=contents)
             else:
+                time.sleep(0.2)
                 self.redirect('/login')
-        else:
-            self.redirect('/login')
 
 
 class LogoutPage(Handler):
     def get(self):
         self.response.headers.add_header('Set-Cookie',
                                         'user_id=%s; Path=/' % '')
+        time.sleep(0.2)
         self.redirect("/login")
 
 class NewPost(Handler):
     def render_front(self, subject="", content="", error=""):
-        userid = self.request.cookies.get('user_id', '')
-        id = check_secure_val(userid)
-        if id:
+        id = is_valid_user(self)
+        if not id:
+            time.sleep(0.2)
+            self.redirect('/login')
+        else:
             user = Users.get_by_id(long(id))
             if user:
                 contents = Content.all()
                 self.render("newpost.html", subject=subject,
                                             content=content,
                                             error=error,
-                                            username=user.username,
+                                            user=user,
                                             validUser=True)
             else:
+                time.sleep(0.2)
                 self.redirect('/login')
-        else:
-            self.redirect('/login')
-
     def get(self):
-        self.render_front()
+        id = is_valid_user(self)
+        if not id:
+            time.sleep(0.2)
+            self.redirect('/login')
+        else:
+            self.render_front()
 
     def post(self):
         subject = self.request.get("subject")
         content = self.request.get("content")
 
         if subject and content:
-            userid = self.request.cookies.get('user_id', '')
-            id=check_secure_val(userid)
-            user=Users.get_by_id(long(id))
-            a = Content(subject=subject,
-                        content=content,
-                        userid=id,
-                        username=user.username,
-                        likes=0,
-                        comments=0,
-                        commentlist=[],
-                        commentuser=[])
-            a.put()
-            self.redirect("/" + str(a.key().id()))
+            id = is_valid_user(self)
+            if not id:
+                time.sleep(0.2)
+                self.redirect('/login')
+            else:
+                user=Users.get_by_id(long(id))
+                a = Content(subject=subject,
+                            content=content,
+                            userid=id,
+                            username=user.username,
+                            likeslist=[],
+                            commentlist=[],
+                            commentuser=[])
+                a.put()
+                time.sleep(0.2)
+                self.redirect("/" + str(a.key().id()))
         else:
             error="All fields are required"
             self.render_front(subject, content, error)
 
 class SinglePost(Handler):
     def render_front(self, artId=""):
-        userid = self.request.cookies.get('user_id', '')
-        id=check_secure_val(userid)
-        user=Users.get_by_id(long(id))
-        content = Content.get_by_id(long(artId))
-        self.render("article.html", content=content,
-                                    username=user.username,
-                                    validUser=True)
+        id = is_valid_user(self)
+        if not id:
+            time.sleep(0.2)
+            self.redirect('/login')
+        else:
+            user=Users.get_by_id(long(id))
+            content = Content.get_by_id(long(artId))
+            self.render("article.html", content=content,
+                                        user=user,
+                                        validUser=True)
 
     def get(self, product_id):
-        self.render_front(artId=product_id)
+        id = is_valid_user(self)
+        if not id:
+            time.sleep(0.2)
+            self.redirect('/login')
+        else:
+            self.render_front(artId=product_id)
 
     def post(self, product_id):
-        userid = self.request.cookies.get('user_id', '')
-        id=check_secure_val(userid)
-        user=Users.get_by_id(long(id))
-        comment = self.request.get("comment")
-        content = Content.get_by_id(long(product_id))
-        if content and comment and len(comment) >= 0:
-            content.commentlist = [comment] + content.commentlist
-            content.commentuser = [user.username] + content.commentuser
-            content.comments = len(content.commentlist)
-            content.put()
-            self.redirect("/"+product_id)
+        id = is_valid_user(self)
+        if not id:
+            time.sleep(0.2)
+            self.redirect('/login')
+        else:
+            user=Users.get_by_id(long(id))
+            comment = self.request.get("comment")
+            content = Content.get_by_id(long(product_id))
+            if content and comment and len(comment) >= 0 and len(comment) < 200:
+                content.commentlist = [comment] + content.commentlist
+                content.commentuser = [user.username] + content.commentuser
+                content.put()
+                time.sleep(0.2)
+                self.redirect("/"+product_id)
+
+class LikePost(Handler):
+
+    def get(self, product_id):
+        id = is_valid_user(self)
+        if not id:
+            time.sleep(0.2)
+            self.redirect('/login')
+        else:
+            content = Content.get_by_id(long(product_id))
+            referrer = self.request.headers.get('referer')
+            if id != content.userid:
+                id = long(id)
+                if id in content.likeslist:
+                    content.likeslist.remove(id)
+                else:
+                    content.likeslist.append(id)
+                content.put()
+                time.sleep(0.2)
+            self.redirect("%s#%slikes" % (referrer, product_id))
+
+
+class DeletePost(Handler):
+    def get(self, product_id):
+        id = is_valid_user(self)
+        if not id:
+            time.sleep(0.2)
+            self.redirect('/login')
+        else:
+            content = Content.get_by_id(long(product_id))
+            if (content.userid != id):
+                time.sleep(0.2)
+                self.redirect('/'+product_id)
+            else:
+                content.delete()
+                time.sleep(0.2)
+                self.redirect('/')
+
+class EditPost(Handler):
+    def render_front(self, subject="", content="", artId=""):
+        id = is_valid_user(self)
+        if not id:
+            time.sleep(0.2)
+            self.redirect('/login')
+        else:
+            user=Users.get_by_id(long(id))
+            self.render("editpost.html",subject=subject,
+                                        content=content,
+                                        user=user,
+                                        validUser=True)
+    def get(self, product_id):
+        id = is_valid_user(self)
+        if not id:
+            time.sleep(0.2)
+            self.redirect('/login')
+        else:
+            content = Content.get_by_id(long(product_id))
+            if content.userid == id:
+                self.render_front(subject=content.subject,
+                                content=content.content)
+            else:
+                time.sleep(0.2)
+                self.redirect('/'+product_id)
+
+    def post(self, product_id):
+        id = is_valid_user(self)
+        if not id:
+            time.sleep(0.2)
+            self.redirect('/login')
+        else:
+            blogpost = Content.get_by_id(long(product_id))
+
+            subject = self.request.get("subject")
+            content = self.request.get("content")
+
+            if subject and content:
+                blogpost.subject = subject
+                blogpost.content = content
+                blogpost.put()
+                time.sleep(0.2)
+                self.redirect("/" + str(blogpost.key().id()))
+            else:
+                error="All fields are required"
+                self.render_front(content, error)
 
 app = webapp2.WSGIApplication([
     ('/logout', LogoutPage),
@@ -288,5 +409,8 @@ app = webapp2.WSGIApplication([
     ('/signup', SignupPage),
     ('/', WelcomePage),
     ('/newpost', NewPost),
-    (r'/(\d+)', SinglePost)
+    (r'/(\d+)', SinglePost),
+    (r'/(\d+)/like', LikePost),
+    (r'/(\d+)/delete', DeletePost),
+    (r'/(\d+)/edit', EditPost)
 ], debug=True)
