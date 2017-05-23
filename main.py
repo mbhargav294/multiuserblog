@@ -244,32 +244,29 @@ class LoginPage(Handler):
     def post(self):
         usrname = self.request.get("username")
         psw = self.request.get("password")
-        error = False
 
         #username and password entered by the user is verified here
         if usrname and psw:
             users = Users.all()
-            users.filter("username =", usrname)
-            if users:
-                for user in users.run(limit=1):
-                    #logging.info(str(user.key().id()))
-                    if check_pw(user.username,psw,user.password):
-                        self.response.headers.add_header('Set-Cookie',
-                                                        'user_id=%s; Path=/' %
-                                                        make_secure_val(str(
-                                                        user.key().id())))
-                        time.sleep(0.2)
-                        self.redirect("/")
-                    else:
-                        error = True
+            our_user = None
+            for user in users:
+                if user.username == usrname:
+                    our_user = user
+                    break
+            #users.filter("username =", usrname)
+            if our_user and check_pw(our_user.username,psw,our_user.password):
+                self.response.headers.add_header('Set-Cookie',
+                                                'user_id=%s; Path=/' %
+                                                make_secure_val(str(
+                                                our_user.key().id())))
+                time.sleep(0.2)
+                self.redirect("/")
             else:
-                error = True
+                logging.info("MADHU BHARGAV IS VERY GOOD")
+                self.render("login.html", validData=False,
+                                        validUser=False)
         else:
-            error = True
-
-        #if there is any error with the data entered by the user
-        #the page reloads without retaining the data
-        if error:
+            logging.info("MADHU BHARGAV IS VERY GOOD")
             self.render("login.html", validData=False,
                                     validUser=False)
 
