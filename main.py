@@ -280,11 +280,9 @@ class LoginPage(Handler):
                 time.sleep(0.2)
                 return self.redirect("/")
             else:
-                logging.info("MADHU BHARGAV IS VERY GOOD")
                 return self.render("login.html", validData=False,
                                    validUser=False)
         else:
-            logging.info("MADHU BHARGAV IS VERY GOOD")
             return self.render("login.html", validData=False,
                                validUser=False)
 
@@ -556,8 +554,7 @@ class EditPost(Handler):
             if blogpost is None:
                 return self.error(404)
             if blogpost.userid != user_id:
-                return self.render_front(subject=blogpost.subject,
-                                         content=blogpost.content)
+                return self.redirect('/')
             # if the edited post is submitted by the user, new post data
             # is verified and updated in the datastore
             if subject and content and len(subject) > 0 and len(content) > 0:
