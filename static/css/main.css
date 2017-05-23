@@ -197,6 +197,21 @@ hr{
 .art-subject {
     font-weight: bold;
     font-size: 24pt;
+    display: block;
+    display: -webkit-box;
+    max-width: 90%;
+    height: 90%;
+    margin: 0 auto;
+    line-height: 1.4;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.big-art-subject {
+    font-weight: bold;
+    font-size: 24pt;
 }
 
 .art-content {

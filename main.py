@@ -463,6 +463,11 @@ class DeletePost(Handler):
                 time.sleep(0.2)
                 self.redirect('/'+product_id)
             else:
+                if content.comments:
+                    for comment_id in content.comments:
+                        comment = long(comment_id)
+                        c = Comments.get_by_id(comment)
+                        c.delete()
                 content.delete()
                 time.sleep(0.2)
                 self.redirect('/')
