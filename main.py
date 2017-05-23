@@ -277,8 +277,11 @@ class LoginPage(Handler):
                 if user.username == usrname:
                     our_user = user
                     break
+            if our_user is None:
+                return self.render("login.html", validData=False,
+                                   validUser=False)
+            verify_psw = check_pw(our_user.username, psw, our_user.password)
             if our_user and verify_psw:
-                verify_psw = check_pw(our_user.username, psw, our_user.password)
                 cookie = make_secure_val(str(our_user.key().id()))
                 cookie_str = 'user_id=%s; Path=/' % cookie
                 self.response.headers.add_header('Set-Cookie', cookie_str)
